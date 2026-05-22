@@ -8,3 +8,6 @@ docs/.vitepress/dist/
 # Common local noise
 .DS_Store
 Thumbs.db
+
+# IDE
+.idea/
