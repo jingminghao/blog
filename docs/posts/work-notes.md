@@ -1,8 +1,189 @@
 # 工作随记
 
-> 这篇文章从工作随记中提炼而来，只保留适合公开沉淀的通用经验；账号、口令、内网地址、密钥等敏感内容已全部剔除。
+> 这篇文章从工作随记中提炼而来，只保留适合公开沉淀的通用经验；账号、口令、内网地址、密钥等敏感内容已全部模糊、剔除。
 
-## 1. Spring Boot 启动钩子怎么选
+
+## 1.域名 | cloudflare
+::: info 免费域名
+> 地址：https://my.dnshe.com/
+>
+> 账号：QQ邮箱  密码：Ppxxxxxx
+> 
+> **jmh.ccwu.cc** 、 **jingmh.ccwu.cc**
+:::
+
+
+::: info cloudflare
+> qq邮箱注册 
+https://dash.cloudflare.com/
+网关（机场）
+
+- 网关：（v2ray）**https://gateway.jmh.ccwu.cc/admin** **https://jingmh-gateway.pages.dev/admin**
+- 博客： **https://blog.jmh.ccwu.cc**  **https://jingmh-blog.pages.dev**
+- 门户网站：**https://jingmh-portal.jmh.ccwu.cc**  **jingmh-admin.pages.dev**     
+- 门户网站后端： **https://portal.jmh.ccwu.cc** （指向本地的服务）
+
+:::
+
+
+## 2.VM | Liunx | docker | windows
+
+::: info docker 配置VPN代理
+> 在 VM 中创建或编辑 Docker 的服务配置目录：
+```bash
+sudo mkdir -p /etc/systemd/system/docker.service.d
+sudo vim /etc/systemd/system/docker.service.d/http-proxy.conf
+```
+
+> 在文件中粘贴以下内容（请将 192.168.X.X:7890 替换为你实际的代理服务器 IP 和端口）：
+
+```txt
+[Service]
+Environment="HTTP_PROXY=http://192.168.12.39:10808/"
+Environment="HTTPS_PROXY=http://192.168.12.39:10808/"
+Environment="NO_PROXY=localhost,127.0.0.1,172.17.0.1"
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
+:::
+
+::: info Liunx 配置VPN代理
+> 判断代理是否可以，可用返回200
+> curl --ssl-no-revoke -o nul -s -w "%{http_code}" -x http://192.168.12.39:10808 https://www.google.com
+
+- 临时 （当前会话可用）
+```bash
+export http_proxy=http://192.168.12.39:10808
+export https_proxy=http://192.168.12.39:10808
+export HTTP_PROXY=http://192.168.12.39:10808
+export HTTPS_PROXY=http://192.168.12.39:10808
+```
+- 清除代理
+```bash
+unset http_proxy
+unset https_proxy
+unset HTTP_PROXY
+unset HTTPS_PROXY
+```
+- 查看代理
+```bash
+echo $http_proxy
+echo $https_proxy
+echo $HTTP_PROXY
+echo $HTTPS_PROXY
+
+```
+- 测试
+```bash
+curl -I https://www.google.com
+```
+
+- 永久 （配置后重新登陆）
+
+```bash
+sudo nano /etc/environment
+```
+> 末尾添加如下（Java 开发环境（Git、Maven、Docker、curl、apt 都会用），推荐直接全配）
+```bash
+export http_proxy=http://192.168.12.39:10808
+export https_proxy=http://192.168.12.39:10808
+export HTTP_PROXY=http://192.168.12.39:10808
+export HTTPS_PROXY=http://192.168.12.39:10808
+export no_proxy=localhost,127.0.0.1,192.168.12.0/24
+export NO_PROXY=localhost,127.0.0.1,192.168.12.0/24
+````
+> nano：保存ctrl+o、退出ctrl+x、剪切一行ctrl+k、粘贴ctrl+u、搜索ctrl+w
+- 配置后重新登陆 
+```bash
+exit   
+su - root
+```
+:::
+
+
+::: info GitHub 推荐用 SSH，后面自动部署、git pull、git push 都方便，不用反复输 Token。
+```
+生成 SSH key，按回车...
+ssh-keygen -t ed25519 -C "1138606085@qq.com"
+
+查看公钥
+cat ~/.ssh/id_ed25519.pub
+
+然后到 GitHub，把公钥粘进去（选可以类型选【Authentication Key】）
+头像 → Settings → SSH and GPG keys → New SSH key
+
+测试，要输入下yes（信任电脑）ssh -vT git@github.com
+ssh -T git@github.com
+
+通了后就可以下载了，注意是ssh的链接
+git clone git@github.com:jingminghao/jingmh_portal.git
+```
+
+
+
+
+:::
+
+::: info docker 项目推送自动部署
+
+:::
+
+
+## 3.内网穿透
+### 3.1 使用cloudflare的Zero Trust
+
+::: info 
+> Zero Trust -> 网络 -> 连接器
+- 让整个 VM 的 Docker 走代理
+第一步：在 Cloudflare 控制台创建 Tunnel
+第二步：在本地 VM 中安装并运行 Cloudflared 客户端
+```bash
+docker run cloudflare/cloudflared:latest tunnel --no-autoupdate run --token eyJhIjoiNjdkMDMxMTAyYjY4Nzg0OTAxYWFlZTJiOTg2MjNiODEiLCJ0IjoiMTEwMTk0ZGYtZjUwNi00ZGFiLTgyMTItOTdkMmE5YmU4ZDMxIiwicyI6IllqVXdabUZtTkRjdE1tRXdNUzAwWXpnNExXSmpaRFF0WkRBelptWmxaamMxWW1ZNSJ9
+```
+> 这个是复制自己当前的，位置：Zero Trust -> 网络 -> 连接器 -> 创建的隧道 -> 添加连接器 -> 设备操作系统docker 
+
+第三部：配置路由（将域名绑定到 VM 服务）
+```txt
+1.在当前的“连接器”页面中，找到 jingmh-tunnel-01 那一行的三个点 ...然后点击配置。
+2.在弹出的菜单中选择 “已发布应用程序路由”-> “添加已发布应用程序路由”。
+
+子域名 (Subdomain)：填写 portal（或者你想用的 protal）。
+域 (Domain)：点击下拉菜单，选择你的主域名 jmh.ccwu.cc。
+路径 (Path)：留空，什么都不填。
+服务 (Service)：
+类型 (Type)：在下拉菜单里选择 HTTP。
+URL / 目标 (Target)：填写 172.17.0.1:你的Docker程序外部映射端口（例如，如果你的 Docker 网页程序映射到虚拟机的端口是 8080，就填 172.17.0.1:8080）。
+```
+
+第四步：测试访问
+```bash
+ssh -o ProxyCommand="cloudflared access ssh --hostname vm.yourdomain.com" user@vm.yourdomain.com
+```
+
+:::
+
+
+
+
+
+
+
+
+
+
+## 1. Spring Boot
+
+- 指定外部配置
+
+```bash
+java -jar app.jar --spring.config.location=/path/to/application.yml
+```
+
+CMD cmd中文乱码
+chcp 65001
 
 项目启动时，几个常见入口的语义并不一样：
 
@@ -21,9 +202,7 @@
 
 ### 指定外部配置
 
-```bash
-java -jar app.jar --spring.config.location=/path/to/application.yml
-```
+
 
 当配置需要和包分离部署时，这个参数很实用。
 
