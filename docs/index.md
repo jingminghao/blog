@@ -12,6 +12,9 @@ hero:
     - theme: alt
       text: 查看文章
       link: /posts/
+    - theme: alt
+      text: 售前AI
+      link: /shouQian/
 
 
 features:
