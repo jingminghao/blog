@@ -18,9 +18,11 @@
 https://dash.cloudflare.com/
 网关（机场）
 
-- 网关：（v2ray）**https://gateway.jmh.ccwu.cc/admin** **https://jingmh-gateway.pages.dev/admin**
+- 网关：（v2ray）**https://gateway.jmh.ccwu.cc/admin** **https://jingmh-gateway.pages.dev/admin** 
+> admin123456
 - 博客： **https://blog.jmh.ccwu.cc**  **https://jingmh-blog.pages.dev**
-- 门户网站：**https://jingmh-portal.jmh.ccwu.cc**  **jingmh-admin.pages.dev**     
+> admin   admin123456
+- 门户网站：**https://jingmh-portal.jmh.ccwu.cc**   **jingmh-admin.pages.dev**     
 - 门户网站后端： **https://portal.jmh.ccwu.cc** （指向本地的服务）
 
 :::
@@ -141,7 +143,11 @@ git clone git@github.com:jingminghao/jingmh_portal.git
 第一步：在 Cloudflare 控制台创建 Tunnel
 第二步：在本地 VM 中安装并运行 Cloudflared 客户端
 ```bash
-docker run cloudflare/cloudflared:latest tunnel --no-autoupdate run --token eyJhIjoiNjdkMDMxMTAyYjY4Nzg0OTAxYWFlZTJiOTg2MjNiODEiLCJ0IjoiMTEwMTk0ZGYtZjUwNi00ZGFiLTgyMTItOTdkMmE5YmU4ZDMxIiwicyI6IllqVXdabUZtTkRjdE1tRXdNUzAwWXpnNExXSmpaRFF0WkRBelptWmxaamMxWW1ZNSJ9
+docker run cloudflare/cloudflared:latest tunnel \
+--name cloudflared
+--restart=always \
+--no-autoupdate run \
+--token eyJhIjoiNjdkMDMxMTAyYjY4Nzg0OTAxYWFlZTJiOTg2MjNiODEiLCJ0IjoiMTEwMTk0ZGYtZjUwNi00ZGFiLTgyMTItOTdkMmE5YmU4ZDMxIiwicyI6IllqVXdabUZtTkRjdE1tRXdNUzAwWXpnNExXSmpaRFF0WkRBelptWmxaamMxWW1ZNSJ9
 ```
 > 这个是复制自己当前的，位置：Zero Trust -> 网络 -> 连接器 -> 创建的隧道 -> 添加连接器 -> 设备操作系统docker 
 
@@ -168,14 +174,69 @@ ssh -o ProxyCommand="cloudflared access ssh --hostname vm.yourdomain.com" user@v
 
 
 
+## 4. git 常用命令
+
+- 查看当前分支
+
+```bash
+git branch --show-current
+
+```
+
+- git强制本地分支推到中讯科
+```bash
+git push origin 中讯科 --force
+```
+
+- 放弃本地已提交的，还原到远程仓库当前版本
+```bash
+git reset --hard origin/prod-20260609-jingmh-导出平台中所有涉及到中文的内容
+```
+
+- 关联分支
+> git branch --set-upstream-to origin/远程分支 本地分支
+```bash
+git branch --set-upstream-to origin/prod prod
+```
+
+- git 回滚到指定提交节点
+```bash
+git reset --hard a7fbec756883947cf2d1e5521f2fbe7dec9c7106
+```
+
+- 强制推送到远程仓库，以覆盖远程分支的历史  dev 是分支
+```bash
+git push origin dev --force
+```
+
+- 修改远程分支名字
+```bash 
+1. 修改本地分支名字
+git branch -m nj-hospital  dev
+
+2. 推送到远程分支
+git  push  origin  dev
+
+3. 本地分支与新分支相连 将本地 online 分支与远端 prod 分支关联
+git pull origin prod --allow-unrelated-histories 
+git branch --set-upstream-to=origin/prod online
+
+4. 删除旧分分支 
+git push --delete origin nj-hospital
+
+```
+
+- 打标签
+```bash
+1.先切到自己要的分支
+
+2.git tag -a 20251117_1051_dev -m "20251117_1051_dev"
+
+3.git push origin 20251117_1051_dev
+```
 
 
-
-
-
-
-## 1. Spring Boot
-
+## 11111
 - 指定外部配置
 
 ```bash
