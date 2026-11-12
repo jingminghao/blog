@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: "jingmh的博客"
-  text: "把工作随记的整理成可复用知识"
-  tagline: "记录排障经验、工程实践和日常技术沉淀。"
+  name: "笔记"
+  text: ""
+  tagline: ""
   actions:
     - theme: brand
       text: 开始阅读

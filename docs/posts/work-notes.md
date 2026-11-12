@@ -18,14 +18,41 @@
 https://dash.cloudflare.com/
 网关（机场）
 
-- 网关：（v2ray）**https://gateway.jmh.ccwu.cc/admin** **https://jingmh-gateway.pages.dev/admin** 
+- 网关：（v2ray）**https://gateway.jmh.ccwu.cc/admin** **https://jingmh-gateway.pages.dev/admin**  （在用）
 > admin123456
 - 博客： **https://blog.jmh.ccwu.cc**  **https://jingmh-blog.pages.dev**
 > admin   admin123456
 - 门户网站：**https://jingmh-portal.jmh.ccwu.cc**   **jingmh-admin.pages.dev**     
 - 门户网站后端： **https://portal.jmh.ccwu.cc** （指向本地的服务）
 
+
+- 网关速度优化
+> 参考：https://blog.englitime.com/videos/network/cloudflare-vpn-residential/
+
+
+## 经明浩优选
+### 优选
+### 参考 https://blog.englitime.com/videos/network/cloudflare-vpn-advance/
+修复 ProxyIP：消除大量连接失败节点（必做）
+CloudflareSpeedTest 本地测速：找到最优 CF IP（必做）
+开启「优选IP作为反代IP」：减少一跳中转（强烈推荐）
+开启 ECH：减少 GFW 干扰，降低延迟抖动（强烈推荐）
+
+D:\download\cfst_windows_amd64.zip
+
+
+104.18.42.118:443#经明浩-优选1
+172.64.229.111:443#经明浩-优选2
+104.18.43.71:443#经明浩-优选3
+104.18.46.0:443#经明浩-优选4
+104.18.34.166:443#经明浩-优选5
+172.64.150.132:443#经明浩-优选6
+104.18.44.99:443#经明浩-优选7
+172.64.149.57:443#经明浩-优选8
+
 :::
+
+
 
 
 ## 2.VM | Liunx | docker | windows
